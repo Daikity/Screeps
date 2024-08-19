@@ -3,10 +3,8 @@
   "version": "0.1.0",
   "main": "index.js",
   "scripts": {
-    "pull": "grunt sandbox",
-    "copy": "grunt write",
-    "dev": "grunt watch:scripts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "grunt main",
+    "dev": "cross-env NODE_ENV=develop grunt watch:scripts"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +15,9 @@
     "@types/screeps": "^3.3.8"
   },
   "devDependencies": {
-    "git-describe": "^4.1.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
+    "git-describe": "^4.1.1",
     "grunt": "^1.6.1",
     "grunt-cli": "^1.5.0",
     "grunt-contrib-clean": "^2.0.1",
