@@ -23,7 +23,7 @@ module.exports = (grunt) => {
         options: {
           email: process.env.SCREEPS_EMAIL,
           token: process.env.SCREEPS_TOKEN,
-          branch: process.env.SCREEPS_BRANCH,
+          branch: 'default',
           // server: 'season'
         },
         dist: {
