@@ -1,4 +1,4 @@
-const { arrayMoveBack } = require('../libs')
+const { arrayMoveBack } = require('../../libs')
 Creep.prototype.fineEnergySource = function () {
   const sources = this.room.find(FIND_SOURCES)
   if(sources.length) {
@@ -34,23 +34,23 @@ Creep.prototype.harvestSources = function () {
       }
     }
     if(source) {
-        const danger = source.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
-        if(danger.length > 0) {
-          this.say('OMG!😨');
-          if(Memory.sources) {
-            _.forEach(Memory.sources, src => {
-              let sources = Memory.sources
-              if(src === this.memory.source) {
-                this.memory.source = arrayMoveBack(sources)[0]
-                return;
-              }
-              sources = arrayMoveBack(sources)
-            })
-          } else {
-            delete this.memory.source
-            this.fineEnergySource()
-          }
+      const danger = source.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
+      if(danger.length > 0) {
+        this.say('OMG!😨');
+        if(Memory.sources) {
+          _.forEach(Memory.sources, src => {
+            let sources = Memory.sources
+            if(src === this.memory.source) {
+              this.memory.source = arrayMoveBack(sources)[0]
+              return;
+            }
+            sources = arrayMoveBack(sources)
+          })
+        } else {
+          delete this.memory.source
+          this.fineEnergySource()
         }
+      }
     }
     source && this.pos.isNearTo(source) ? this.harvest(source) : this.moveTo(source)
     return false

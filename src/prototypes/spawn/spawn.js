@@ -1,4 +1,4 @@
-const { makeId } = require('../libs')
+const { makeId } = require('../../libs')
 
 StructureSpawn.prototype.activateTowers = function(isActive) {
   const towers = this.room.find(FIND_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });

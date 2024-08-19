@@ -1,4 +1,4 @@
-require('./proto.room.position')
-require('./proto.creep')
-require('./proto.tower')
-require('./proto.spawn')
+require('./room')
+require('./creep')
+require('./tower')
+require('./spawn')

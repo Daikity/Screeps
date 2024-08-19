@@ -1,4 +1,4 @@
-const { getWalkablePosition, getFreePosition } = require('../libs')
+const { getWalkablePosition, getFreePosition } = require('../../libs')
 
 RoomPosition.prototype.getNearbyPosition = function () {
   const positions = [], startX = this.x || 1, startY = this.y || 1
