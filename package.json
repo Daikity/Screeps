@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "main": "index.js",
   "scripts": {
-    "pull": "grunt screeps",
-    "copy": "grunt copy",
+    "pull": "grunt sandbox",
+    "copy": "grunt write",
     "dev": "grunt watch:scripts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,13 +13,20 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "grunt-screeps": "^1.5.0"
+    "@types/lodash": "^4.17.7",
+    "@types/screeps": "^3.3.8"
   },
   "devDependencies": {
+    "git-describe": "^4.1.1",
+    "dotenv": "^16.4.5",
     "grunt": "^1.6.1",
+    "grunt-cli": "^1.5.0",
     "grunt-contrib-clean": "^2.0.1",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-watch": "^1.1.0"
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-screeps": "^1.5.0",
+    "lodash": "^4.17.21",
+    "matchdep": "^2.0.0",
+    "module-concat": "^2.3.0"
   }
 }

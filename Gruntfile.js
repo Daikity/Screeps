@@ -1,45 +1,46 @@
 const dotenv = require('dotenv');
+const matchdep = require('matchdep');
+const mergeFiles = require('./grunt-scripts/mergeFiles');
 dotenv.config()
 
 module.exports = (grunt) => {
-    grunt.loadNpmTasks('grunt-screeps');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    matchdep.filterAll(['grunt-*', '!grunt-cli']).forEach(grunt.loadNpmTasks);
+    mergeFiles(grunt);
+
 
     grunt.initConfig({
-        copy: {
-            main: {
-                expand: true,
-                cwd: 'src',
-                src: '**/*.{js,wasm}',
-                dest: 'dist/',
-            },
+      copy:      {
+        main: {
+          expand:  true,
+          flatten: true,
+          filter:  'isFile',
+          cwd:     'dist/',
+          src:     '**',
+          dest:    'Update This Path'
         },
-        screeps: {
-            options: {
-                email: process.env.SCREEPS_EMAIL,
-                token: process.env.SCREEPS_TOKEN,
-                branch: process.env.SCREEPS_BRANCH,
-                // server: 'season'
-            },
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'dist/',
-                        src: ['**/*.{js,wasm}'],
-                        flatten: true
-                    }
-                ]
-            }
+      },
+      screeps: {
+        options: {
+          email: process.env.SCREEPS_EMAIL,
+          token: process.env.SCREEPS_TOKEN,
+          branch: process.env.SCREEPS_BRANCH,
+          // server: 'season'
         },
-        clean: ['dist/*'],
-        watch: {
-            scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['clean', 'copy:main', 'clean', 'copy:main', 'screeps'],
-            },
+        dist: {
+          src: ['dist/*.js']
         }
+      },
+      watch: {
+        scripts: {
+          files: ['src/main.js'],
+          tasks: ['main'],
+        },
+      }
     });
+
+    grunt.registerTask('main', ['merge', 'write']);
+    grunt.registerTask('sandbox', ['merge', 'write-private']);
+    grunt.registerTask('merge', 'mergeFiles');
+    grunt.registerTask('write', 'screeps');
+    grunt.registerTask('write-private', 'copy');
 }
