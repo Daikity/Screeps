@@ -1,21 +1,34 @@
-const getWalkablePosition = (terrain, nearbyPosition) => {
+/**
+import { object } from '../node_modules/matchdep/lib/matchdep';
+ * Returns the free position
+ * @param {RoomTerrain} terrain
+ * @param {RoomPosition} nearbyPosition
+ * @returns {RoomPosition} available positions around the resource
+ */
+const getWalkablePosition = (terrain, nearbyPosition, object) => {
   return _.filter(nearbyPosition, (position) => {
-    let check;
-    position.look().forEach(function(lookObject) {
-      if(lookObject.type === 'structure') {
-          const struct = lookObject.structure.structureType;
-          check = struct === STRUCTURE_ROAD
-          return
+    const isRoad = position.look().forEach(function(lookObject) {
+      if(lookObject.type === LOOK_STRUCTURES) {
+          return lookObject.structure.structureType === STRUCTURE_ROAD
         }
     });
-    return terrain.get(position.x, position.y) !== TERRAIN_MASK_WALL || check
+    return terrain.get(position.x, position.y) !== object || isRoad
   })
 }
 
+/**
+ * Returns the free position
+ * @param {RoomPosition} walkablePosition available positions around the resource
+ * @returns {RoomPosition} free positions around the resource
+ */
 const getFreePosition = (walkablePosition) => {
-    return _.filter(walkablePosition, (position) => !position.lookFor(LOOK_CREEPS).length )
+  return _.filter(walkablePosition, (position) => !position.lookFor(LOOK_CREEPS).length )
 }
 
+/**
+ * Create random string
+ * @returns random string
+ */
 const makeId = () => {
   let string = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -28,6 +41,11 @@ const makeId = () => {
   return string
 }
 
+/**
+ * Move the last index to the beginning
+ * @param {Array} arr any array
+ * @returns {Array} new array
+ */
 const arrayMoveBack = (arr) => {
   const result = []
   for (let i = 1; i < arr.length; i++) {
