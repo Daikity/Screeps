@@ -39,10 +39,19 @@ Creep.prototype.run = function () {
       break;
     default:
       if (!this.memory.isHarvest && !this.memory.working) {
-        const spawnPos = Game.spawns['Spawn1'].pos
-        const path = new RoomPosition(spawnPos.x - 3, spawnPos.y + 3, this.room.name)
-        if (!this.pos.isEqualTo(path)) {
-          this.moveTo(path)
+        let mySpawn = null
+        _.forEach(Game.rooms, room => {
+          const spawns = room.find(FIND_MY_SPAWNS)
+          _.forEach(spawns, spawn => {
+            mySpawn = spawn
+          })
+        })
+        if (Boolean(mySpawn)) {
+          const spawnPos = mySpawn.pos
+          const path = new RoomPosition(spawnPos.x - 3, spawnPos.y + 3, this.room.name)
+          if (!this.pos.isEqualTo(path)) {
+            this.moveTo(path)
+          }
         }
       }
       break;

@@ -1,4 +1,16 @@
 const checkRequiredMemoryData = () => {
+  const containersInRoom = [], miners = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner').length;
+  _.forEach(Game.rooms, room => {
+    const containers = room.find(FIND_STRUCTURES, {
+      filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
+    })
+    containersInRoom.push(...containers);
+  })
+
+  if(Memory.config && miners !== containersInRoom.length) {
+    Memory.config.creeps.miners = containersInRoom.length
+  }
+
   if(!Memory.config) {
     Memory.config = {}
     Memory.config.creeps = {

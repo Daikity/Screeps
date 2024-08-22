@@ -16,11 +16,16 @@ StructureSpawn.prototype.killCreeps = function(config) {
       needRoles.push(key)
     }
   }
+  const creep = _.find(Game.creeps, creep => !creep.memory.role)
+
+  if (creep) {
+    creep.suicide();
+  }
 
   _.forEach(needRoles, role => {
-    const creeps = _.filter(Game.creeps, creep => !creep.memory.role || creep.memory.role === String(role).slice(0, -1))
-    if (creeps.length > 0) {
-      creeps[0].suicide();
+    const creep = _.find(Game.creeps, creep => creep.memory.role === String(role).slice(0, -1))
+    if (creep) {
+      creep.suicide();
     }
   })
 }
