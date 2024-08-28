@@ -1,5 +1,5 @@
 require('./prototypes')
-const { checkRequiredMemoryData } = require('./configs')
+const { initialLinks, checkRequiredMemoryData } = require('./configs')
 
 module.exports.loop = function () {
   for(let i in Memory.creeps) {
@@ -14,6 +14,7 @@ module.exports.loop = function () {
 
     _.forEach(Game.rooms, room => {
       const spawns = room.find(FIND_MY_SPAWNS)
+      initialLinks(room)
       _.forEach(spawns, spawn => {
         spawn.killCreeps(Memory.config.creeps)
         spawn.activateTowers(Memory.config.activeTowers)

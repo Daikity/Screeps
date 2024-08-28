@@ -47,4 +47,3 @@ StructureSpawn.prototype.createNewCreep = function(maxMyCreeps) {
     });
   }
 }
-JSON.stringify

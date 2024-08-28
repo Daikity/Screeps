@@ -21,20 +21,23 @@ RoomPosition.prototype.getNearbyPosition = function () {
 
 RoomPosition.prototype.getPositionForContainer = function () {
   const nearPosition = this.getNearbyPosition()
+  const containers = []
 
-  const findContainersAroundSource = _.find(nearPosition, position => {
-    const found = position.lookFor(LOOK_STRUCTURES);
-    if(found.length > 0) {
-      if (found[0].structureType === STRUCTURE_CONTAINER) {
-        return position
+  if(Memory.sources) {
+    for (const room in Memory.sources) {
+      if (Game.rooms[room]) {
+        const containersInRoom = Game.rooms[room].find(FIND_STRUCTURES, {
+        filter: (structure) => structure.structureType == STRUCTURE_CONTAINER
+      })
+      containers.push(...containersInRoom)
       }
     }
-    return false
-  })
-  if (findContainersAroundSource) {
-    return findContainersAroundSource
   }
-  return false
+
+  const findContainersAroundSource = _.find(nearPosition, position => {
+    return _.find(containers, container => container.pos.isEqualTo(position)) || false;
+  })
+  return findContainersAroundSource || false
 }
 
 RoomPosition.prototype.getOpenPositionForContainer = function () {

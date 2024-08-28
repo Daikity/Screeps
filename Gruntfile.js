@@ -24,6 +24,7 @@ module.exports = (grunt) => {
           email: process.env.SCREEPS_EMAIL,
           token: process.env.SCREEPS_TOKEN,
           branch: process.env.NODE_ENV || 'default',
+          ptr: process.env.PTR || false
           // server: 'season'
         },
         dist: {
@@ -32,7 +33,7 @@ module.exports = (grunt) => {
       },
       watch: {
         scripts: {
-          files: ['src/main.js'],
+          files: ['src/**/*.js'],
           tasks: ['main'],
         },
       }
