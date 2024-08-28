@@ -54,6 +54,7 @@ Creep.prototype.findContainers = function () {
 Creep.prototype.harvestSources = function () {
   const source = Game.getObjectById(this.memory.source)
   const containers = this.findContainers()
+  const storageLink = Memory.config.storageLink ? Game.getObjectById(Memory.config.storageLink) : undefined
 
   if(this.store.getFreeCapacity() > 0 && !this.memory.working) {
 
@@ -64,12 +65,21 @@ Creep.prototype.harvestSources = function () {
       }
     }
 
+
+    if (storageLink && this.memory.role !== 'miner' && storageLink.energy > 0) {
+      if (this.takeEnergyFromLink()) {
+        this.memory.isHarvest = false
+        return true
+      }
+      return false
+    }
+
     if (containers.length > 0 && this.memory.role !== 'miner') {
       const container = _.find(containers, cont => cont.id === this.memory.container)
       if(!container) {
         this.memory.container = containers[0].id
       }
-      if (container && container.store.getUsedCapacity() >= this.store.getCapacity()) {
+      if (container && container.store.getUsedCapacity() > 0) {
         if (this.takeEnergyFromContainer(this.memory.container)) {
           this.memory.isHarvest = false
           return true
@@ -102,8 +112,6 @@ Creep.prototype.harvestSources = function () {
 }
 
 Creep.prototype.takeEnergyFromContainer = function (containerId) {
-  const storageLink = Memory.config.storageLink ? Game.getObjectById(Memory.config.storageLink) : undefined
-
   const containers = this.room.find(FIND_STRUCTURES, {
     filter: (structure) => {
       return structure.structureType == STRUCTURE_CONTAINER &&
@@ -112,10 +120,19 @@ Creep.prototype.takeEnergyFromContainer = function (containerId) {
   });
   if(containers.length > 0) {
     const source = this.pos.findClosestByPath(containers)
-    const useStructure = storageLink && storageLink.energy > 0 ? storageLink : source
+    if(this.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      this.moveTo(source);
+    }
+    return false;
+  }
+  return true
+}
 
-    if(this.withdraw(useStructure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-      this.moveTo(useStructure);
+Creep.prototype.takeEnergyFromLink = function() {
+  const storageLink = Memory.config.storageLink ? Game.getObjectById(Memory.config.storageLink) : undefined
+  if(storageLink) {
+    if(this.withdraw(storageLink, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      this.moveTo(storageLink);
     }
     return false;
   }
