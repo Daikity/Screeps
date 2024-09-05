@@ -1,5 +1,4 @@
 const { makeId } = require('../../libs')
-const { configForNewCreep } = require('../../configs')
 
 StructureSpawn.prototype.activateTowers = function(isActive) {
   const towers = this.room.find(FIND_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });
@@ -8,42 +7,30 @@ StructureSpawn.prototype.activateTowers = function(isActive) {
   }
 }
 
-StructureSpawn.prototype.killCreeps = function(config) {
-  const needRoles = []
-  for (const key in config) {
-    const countCreeps = _.filter(Game.creeps, creep => creep.memory.role === String(key).slice(0, -1))
-    if (countCreeps.length > config[key]) {
-      needRoles.push(key)
-    }
-  }
-  const creep = _.find(Game.creeps, creep => !creep.memory.role)
+StructureSpawn.prototype.createCreepByRole = function (role) {
+  const availableEnergy = this.room.energyAvailable;
+  const blueprints = this.creepBlueprints[role];
 
-  if (creep) {
-    creep.suicide();
+  if (!blueprints) {
+      Memory.debug ? console.log(`No blueprints found for role: ${role}`) : null;
+      return ERR_INVALID_ARGS;
   }
 
-  _.forEach(needRoles, role => {
-    const creep = _.find(Game.creeps, creep => creep.memory.role === String(role).slice(0, -1))
-    if (creep) {
-      creep.suicide();
-    }
-  })
-}
+  const blueprint = _.findLast(blueprints, bp => bp.cost <= availableEnergy);
 
-StructureSpawn.prototype.createNewCreep = function(maxMyCreeps) {
-  const {skills, memory} = configForNewCreep(Memory.config.creeps, this)
-  const creeps = this.room.find(FIND_MY_CREEPS);
-  const extensions = this.room.find(FIND_STRUCTURES, {
-    filter: { structureType: STRUCTURE_EXTENSION }
-  });
+  if (blueprint) {
+      const newName = `${role}_${makeId()}`;
+      const result = this.spawnCreep(blueprint.body, newName, { memory: { role: role } });
 
-  if(creeps.length < maxMyCreeps) {
-    this.spawnCreep(skills, makeId(), {
-      memory: { ...memory },
-      energyStructures: [
-        ...extensions,
-        this
-      ]
-    });
+      if (result === OK) {
+          Memory.debug ? console.log(`Spawned new ${role}: ${newName}`) : null;
+          return newName;
+      } else {
+          Memory.debug ? console.log(`Failed to spawn ${role}: ${result}`) : null;
+          return result;
+      }
+  } else {
+      Memory.debug ? console.log(`Not enough energy to spawn ${role}. Required: ${blueprints[0].cost}, Available: ${availableEnergy}`) : null;
+      return ERR_NOT_ENOUGH_ENERGY;
   }
-}
+};
