@@ -1,5 +1,5 @@
 require('./prototypes')
-const { initialConfigMemory } = require('./configs')
+const { initialConfigMemory, uploadEnergyLink } = require('./configs')
 
 module.exports.loop = function () {
   for(let i in Memory.creeps) {
@@ -19,6 +19,7 @@ module.exports.loop = function () {
   if (initialConfigMemory()) {
     _.forEach(Game.rooms, room => {
       const spawns = room.find(FIND_MY_SPAWNS)
+      uploadEnergyLink(room)
       _.forEach(spawns, spawn => {
         spawn.activateTowers(Memory.config.activeTowers)
         spawn.manageCreepPopulation()

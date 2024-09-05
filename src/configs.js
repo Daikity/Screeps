@@ -9,4 +9,34 @@ const initialConfigMemory = () => {
   return true;
 }
 
-module.exports = { initialConfigMemory }
+const uploadEnergyLink = (room) => {
+  const storage = room.storage
+  if(!storage) {
+    if(Memory.debug) {
+      console.log(`Storage not found for ${room}`)
+    }
+    return undefined
+  }
+  const fromLink = room.find(FIND_STRUCTURES, {
+    filter: (structure) => structure.pos.isNearTo(storage) && structure.structureType === STRUCTURE_LINK
+  })[0];
+
+  const toLink = room.find(FIND_STRUCTURES, {
+    filter: (structure) => !structure.pos.isEqualTo(fromLink.pos) && structure.structureType === STRUCTURE_LINK
+  });
+
+  if (!fromLink || !toLink) {
+    return undefined
+  }
+
+  if(toLink.length > 0) {
+    _.forEach(toLink, link => {
+      link.transferEnergy(fromLink);
+      if(Memory.debug) {
+        console.log(`Energy transferred from ${fromLink.pos} to ${link.pos}`)
+      }
+    })
+  }
+}
+
+module.exports = { initialConfigMemory, uploadEnergyLink }
