@@ -11,11 +11,11 @@ Creep.prototype.repairer = function () {
       this.memory.work = true
       const structures = _.sortBy(this.room.find(FIND_STRUCTURES, {
         filter: object => object.hits < object.hitsMax && object.structureType !== STRUCTURE_WALL
-      }),[target => Math.floor(target.hits / target.hitsMax * 100) < 30], [target => target.hits])
+      }),[target => Math.floor(target.hits / target.hitsMax * 100) < 80], [target => target.hits])
 
       const walls = _.sortBy(this.room.find(FIND_STRUCTURES, {
         filter: object => object.hits < object.hitsMax && object.structureType === STRUCTURE_WALL
-      }),[target => Math.floor(target.hits / target.hitsMax * 100) < 30], [target => target.hits])
+      }),[target => Math.floor(target.hits / target.hitsMax * 100) < 80], [target => target.hits])
 
       const targets = [].concat(structures, walls)
 
