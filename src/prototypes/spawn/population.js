@@ -13,7 +13,9 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
       upgrader: this.countCreepsByRole('upgrader'),
       builder: this.countCreepsByRole('builder'),
       miner: this.countCreepsByRole('miner'),
-      repairer: this.countCreepsByRole('repairer')
+      repairer: this.countCreepsByRole('repairer'),
+      military: this.countCreepsByRole('military'),
+      mineralMiner: this.countCreepsByRole('mineralMiner'),
   };
 
   // Создаем недостающих крипов для каждой роли

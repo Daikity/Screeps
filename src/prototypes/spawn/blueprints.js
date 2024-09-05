@@ -30,12 +30,16 @@ StructureSpawn.prototype.creepBlueprints = {
       { cost: 550, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
   ],
   miner: [
-      { cost: 300, body: [WORK, WORK, MOVE] }, // Минимум 300 энергии для двух WORK
-      { cost: 550, body: [WORK, WORK, WORK, MOVE] }
+      { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
+      { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
   ],
-  claimer: [
-      { cost: 650, body: [CLAIM, MOVE] }, // Минимум для CLAIM крипа
-      { cost: 1300, body: [CLAIM, CLAIM, MOVE, MOVE] } // Двойной CLAIM для захвата
+  mineralMiner: [
+    { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
+    { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
+  ],
+  military: [
+      { cost: 650, body: [CLAIM, MOVE] },
+      { cost: 1300, body: [CLAIM, CLAIM, MOVE, MOVE] }
   ]
 };
 
@@ -51,6 +55,9 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
   const links = room.find(FIND_STRUCTURES, {
       filter: structure => structure.structureType === STRUCTURE_LINK
   });
+  const extractor = this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => structure.structureType === STRUCTURE_EXTRACTOR
+  })[0]
 
   const totalStored = (storage ? storage.store[RESOURCE_ENERGY] : 0) +
                       _.sum(containers, container => container.store[RESOURCE_ENERGY]) +
@@ -76,6 +83,8 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
       upgrader: room.controller.level === 8 ? targetUpgraderCountForMaxLvl : targetUpgraderCount,
       builder: countStructure > 0 ? targetBuilderCount : 0,
       miner: _.size(containers),
-      repairer: countDamageStructures > 0 ? (countDamageStructures > 4 ? 3 : 2) : 0
+      repairer: countDamageStructures > 0 ? (countDamageStructures > 4 ? 3 : 2) : 0,
+      military: Memory.config.military ? Memory.config.military : 0,
+      mineralMiner: extractor ? 1 : 0,
   };
 };

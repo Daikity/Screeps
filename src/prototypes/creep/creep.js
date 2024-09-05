@@ -10,6 +10,10 @@ Creep.prototype.findEnergyAndFreeSpot = function() {
 
 Creep.prototype.findMinerTarget = function() {
   const source = this.pos.findClosestByRange(FIND_SOURCES);
+  const link = this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => structure.structureType === STRUCTURE_LINK &&
+      this.pos.isNearTo(structure.pos)
+  })[0];
 
   if (!source) {
     return null;
@@ -27,9 +31,11 @@ Creep.prototype.findMinerTarget = function() {
     return !creepsOnContainer.length || (creepsOnContainer.length && creepsOnContainer[0].memory.role !== 'miner');
   });
 
-
   if (freeContainer) {
     if (this.pos.isEqualTo(freeContainer.pos)) {
+      if(!this.store.getFreeCapacity() && link) {
+        this.transfer(link, RESOURCE_ENERGY)
+      }
       this.harvest(source);
     } else {
       this.moveTo(freeContainer);
