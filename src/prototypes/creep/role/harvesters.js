@@ -1,6 +1,6 @@
-Creep.prototype.transferSource = function () {
+Creep.prototype.harvester = function() {
   const storage = this.room.storage
-  const targets = this.room.find(FIND_STRUCTURES, {
+  const structure = this.room.find(FIND_STRUCTURES, {
     filter: (structure) => {
       return (
         structure.structureType == STRUCTURE_EXTENSION ||
@@ -8,20 +8,17 @@ Creep.prototype.transferSource = function () {
         structure.structureType == STRUCTURE_TOWER ) &&
         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
     }
-  });
-  if(targets.length > 0) {
-    if(this.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-      this.moveTo(targets[0]);
-    } else this.memory.working = false;
-    return true;
+  })
+  // .sort((a, b) => a.pos.getRangeTo(a) - b.pos.getRangeTo(b));
+  const targetUpload = structure.length > 0 ? structure[0] : (storage ? storage : this.say('Where?'));
+  if (this.store.getFreeCapacity() > 0) {
+    const target = this.findEnergyAndFreeSpot();
+    if (target) {
+      this.moveToAndCollect(target);
+    }
   } else {
-    if (storage) {
-      if(this.transfer(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(storage);
-      } else this.memory.working = false;
-      return true;
+    if(this.transfer(targetUpload, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      this.moveTo(targetUpload);
     }
   }
-  this.memory.working = false;
-  return false;
-}
+};

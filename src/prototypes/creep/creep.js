@@ -46,16 +46,15 @@ Creep.prototype.findMinerTarget = function() {
 };
 
 Creep.prototype.findGeneralTarget = function() {
-  const containers = this.room.findContainersNear(this.store.getFreeCapacity())
-  const sortContainers = _.sortBy(containers, (c) => c.pos.findClosestByRange(c))
+  const containers = _.sortBy(this.room.findContainersNear(), container => this.pos.getRangeTo(container.pos))
   const links = this.room.findLinksNear();
   const droppedResources = this.room.findDroppedResources(RESOURCE_ENERGY);
   const tombstones = this.room.findTombstonesWithResource(RESOURCE_ENERGY);
   const ruins = this.room.findRuinsWithResource(RESOURCE_ENERGY);
 
-  const targets = [].concat(sortContainers, links, droppedResources, tombstones, ruins).filter(Boolean);
+  const targets = [].concat(droppedResources, tombstones, ruins, containers, links).filter(Boolean);
 
-  const freeTarget = targets.find((target) => target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
+  const freeTarget = targets.find((target) => target.store && target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
 
   if (freeTarget) {
     this.moveToAndCollect(freeTarget);

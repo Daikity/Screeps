@@ -1,7 +1,7 @@
-Room.prototype.findContainersNear = function(creepFreeCapacity) {
+Room.prototype.findContainersNear = function() {
   return this.find(FIND_STRUCTURES, {
     filter: (structure) => structure.structureType === STRUCTURE_CONTAINER &&
-      structure.store[RESOURCE_ENERGY] > 0 && structure.store[RESOURCE_ENERGY] > creepFreeCapacity &&
+      structure.store[RESOURCE_ENERGY] > 0 &&
       !this.find(FIND_HOSTILE_CREEPS, 5).length
   });
 };

@@ -1,40 +1,23 @@
-Creep.prototype.mineSource = function () {
-  const source = Game.getObjectById(this.memory.source)
+Creep.prototype.miner = function() {
+  this.findEnergyAndFreeSpot();
+};
 
-  if(!this.memory.working) {
-    if (source) {
-      const positionForContainer = source.pos.getPositionForContainer()
-      if (!positionForContainer) {
-        this.say('Hmm..!🧐')
-        this.addSourceId()
-        return false
-      }
+Creep.prototype.mineMinerals = function () {
+  const mineral = this.room.find(FIND_MINERALS)[0]
+  const storage = this.room.storage
+  const extractor = this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => structure.structureType === STRUCTURE_EXTRACTOR
+  })[0]
 
-      const openPositionForContainer = positionForContainer.getOpenPositionForContainer()
-
-      const danger = source.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
-      if(danger.length > 0) {
-        this.say('OMG!😨')
-        this.addSourceId()
-        return false
-      }
-      if (openPositionForContainer) {
-        if(!this.pos.isNearTo(source)) {
-          this.moveTo(openPositionForContainer)
-        }
-      } else if (this.pos.isEqualTo(positionForContainer)) {
-        if(this.pos.isNearTo(source)) {
-          this.harvest(source)
-        }
-      } else {
-        this.addSourceId()
-        return false
-      }
+  if (extractor && extractor.length > 0) {
+    if (this.store.getFreeCapacity() > 0) {
+      this.pos.isNearTo(mineral) ? this.harvest(mineral) : this.moveTo(mineral)
     } else {
-      this.addSourceId()
-      return false
+      if (storage) {
+        this.pos.isNearTo(storage) ? this.transfer(storage, mineral.mineralType) : this.moveTo(storage)
+      } else return false
     }
+    return true
   }
-  this.memory.isHarvest = false
-  return true
+  return false
 }

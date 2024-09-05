@@ -1,5 +1,5 @@
 require('./prototypes')
-const { initialLinks, checkRequiredMemoryData } = require('./configs')
+const { initialConfigMemory } = require('./configs')
 
 module.exports.loop = function () {
   for(let i in Memory.creeps) {
@@ -8,23 +8,21 @@ module.exports.loop = function () {
     }
   }
 
-  if (checkRequiredMemoryData()) {
-    let MAX_BASE_CREEPS = 0;
-    for(let i in Memory.config.creeps) { MAX_BASE_CREEPS += Memory.config.creeps[i] }
+  _.forEach(Game.creeps, creep => {
+    if (creep.memory.role) {
+      if (typeof creep[creep.memory.role] === 'function') {
+        creep[creep.memory.role]();
+      }
+    }
+  })
 
+  if (initialConfigMemory()) {
     _.forEach(Game.rooms, room => {
       const spawns = room.find(FIND_MY_SPAWNS)
-      initialLinks(room)
       _.forEach(spawns, spawn => {
-        spawn.killCreeps(Memory.config.creeps)
         spawn.activateTowers(Memory.config.activeTowers)
-        spawn.createNewCreep(MAX_BASE_CREEPS)
+        spawn.manageCreepPopulation()
       })
     })
-
-    for(let name in Game.creeps) {
-      const creep = Game.creeps[name];
-      creep.run();
-    }
   }
 }
