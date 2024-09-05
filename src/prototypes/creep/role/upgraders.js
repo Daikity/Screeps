@@ -13,7 +13,12 @@ Creep.prototype.upgrader = function() {
       if (this.pos.inRangeTo(this.room.controller, 3)) {
         this.upgradeController(this.room.controller);
       } else {
-        this.moveTo(this.room.controller);
+        this.moveTo(this.room.controller, {
+          visualizePathStyle: {
+            stroke: '#042572',
+            opacity: 0.4
+          }
+        });
       }
     }
   }

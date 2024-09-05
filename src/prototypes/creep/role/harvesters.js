@@ -18,7 +18,12 @@ Creep.prototype.harvester = function() {
     }
   } else {
     if(this.transfer(targetUpload, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-      this.moveTo(targetUpload);
+      this.moveTo(targetUpload, {
+        visualizePathStyle: {
+          stroke: '#0c985b',
+          opacity: 0.4
+        }
+      });
     }
   }
 };

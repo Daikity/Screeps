@@ -67,10 +67,15 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
   const targetUpgraderCountForMaxLvl = room.controller && room.controller.ticksToDowngrade < 1000 ? 3 : 1;
   const targetUpgraderCount = room.controller && room.controller.progress / room.controller.progressTotal * 100 < 80 ? 4 : 2
 
+  const countDamageStructures = this.room.find(FIND_STRUCTURES, {
+    filter: object => object.hits < object.hitsMax
+  }).length
+
   return {
       harvester: targetHarvesterCount,
       upgrader: room.controller.level === 8 ? targetUpgraderCountForMaxLvl : targetUpgraderCount,
       builder: countStructure > 0 ? targetBuilderCount : 0,
-      miner: _.size(containers)
+      miner: _.size(containers),
+      repairer: countDamageStructures > 0 ? (countDamageStructures > 4 ? 3 : 2) : 0
   };
 };
