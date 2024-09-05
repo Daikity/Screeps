@@ -1,69 +1,93 @@
-const { arrayMoveBack } = require('../../libs')
 require('./role')
 
-Creep.prototype.addSourceId = function () {
-  const source = Game.getObjectById(this.memory.source)
-  if(source && Memory.sources) {
-    let sources = Memory.sources[this.room.name]
-    const hearRoom = _.find(Memory.sources, roomName => this.room.name === roomName)
-    if(!hearRoom) {
-      this.fineEnergySource()
-    }
-    _.forEach(Memory.sources[this.room.name], src => {
-      if(src === this.memory.source) {
-        this.memory.source = arrayMoveBack(sources)[0]
-        return;
-      }
-      sources = arrayMoveBack(sources)
-    })
+Creep.prototype.findEnergyAndFreeSpot = function() {
+  if (this.memory.role === 'miner') {
+    return this.findMinerTarget();
   } else {
-    delete this.memory.source
-    this.fineEnergySource()
+    return this.findGeneralTarget();
   }
-}
+};
 
-Creep.prototype.run = function () {
-  const storageIsFull = this.memory.isHarvest ? this.harvestSources() : true;
-  const role = this.memory.role
-  const notHarvestRoles = ['defender', 'linkLoader', 'military', 'heeler']
-  if (this.store.getUsedCapacity() === 0) {
-    if (!_.find(notHarvestRoles, role => this.memory.role === role)) {
-      this.memory.isHarvest = true
+Creep.prototype.findMinerTarget = function() {
+  const source = this.pos.findClosestByRange(FIND_SOURCES);
+
+  if (!source) {
+    return null;
+  }
+
+  const containers = this.room.find(FIND_STRUCTURES, {
+    filter: (structure) => structure.pos.lookFor(LOOK_ENERGY) && structure.structureType === STRUCTURE_CONTAINER
+  });
+
+  const freeContainer = containers.find((container) => {
+    const creepsOnContainer = container.pos.lookFor(LOOK_CREEPS);
+    if(this.pos.isEqualTo(container.pos)) {
+      return true
     }
+    return !creepsOnContainer.length || (creepsOnContainer.length && creepsOnContainer[0].memory.role !== 'miner');
+  });
+
+
+  if (freeContainer) {
+    if (this.pos.isEqualTo(freeContainer.pos)) {
+      this.harvest(source);
+    } else {
+      this.moveTo(freeContainer);
+    }
+    return freeContainer;
+  } else {
+    if (this.pos.isNearTo(source)) {
+      this.harvest(source);
+    } else {
+      this.moveTo(source);
+    }
+    return source;
+  }
+};
+
+Creep.prototype.findGeneralTarget = function() {
+  const containers = this.room.findContainersNear(this.store.getFreeCapacity())
+  const sortContainers = _.sortBy(containers, (c) => c.pos.findClosestByRange(c))
+  const links = this.room.findLinksNear();
+  const droppedResources = this.room.findDroppedResources(RESOURCE_ENERGY);
+  const tombstones = this.room.findTombstonesWithResource(RESOURCE_ENERGY);
+  const ruins = this.room.findRuinsWithResource(RESOURCE_ENERGY);
+
+  const targets = [].concat(sortContainers, links, droppedResources, tombstones, ruins).filter(Boolean);
+
+  const freeTarget = targets.find((target) => target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
+
+  if (freeTarget) {
+    this.moveToAndCollect(freeTarget);
+    return freeTarget;
   }
 
-  switch (true) {
-    case storageIsFull && role === 'harvester' && this.transferSource():
-      break;
-    case storageIsFull && role === 'builder' && (this.buildingController() || this.transferSource()):
-      break;
-    case storageIsFull && role === 'miner' && this.mineSource():
-      break;
-    case storageIsFull && role === 'upgrader' && this.upgradingController():
-      break;
-    case storageIsFull && role === 'deliveryman' && this.transferToStorage():
-      break;
-    case role === 'defender' && this.defendRoom():
-      break;
-    case role === 'linkLoader' && this.transferEnergyToLink():
-      break;
-    default:
-      if (!this.memory.isHarvest && !this.memory.working) {
-        let mySpawn = null
-        _.forEach(Game.rooms, room => {
-          const spawns = room.find(FIND_MY_SPAWNS)
-          _.forEach(spawns, spawn => {
-            mySpawn = spawn
-          })
-        })
-        if (Boolean(mySpawn)) {
-          const spawnPos = mySpawn.pos
-          const path = new RoomPosition(spawnPos.x - 2, spawnPos.y - 3, this.room.name)
-          if (!this.pos.isEqualTo(path)) {
-            this.moveTo(path)
-          }
-        }
-      }
-      break;
+  const sourceData = this.pos.findOpenSource(RESOURCE_ENERGY);
+
+  if (sourceData) {
+    this.moveToAndHarvest(sourceData);
+    return sourceData;
   }
-}
+
+  return null;
+};
+
+Creep.prototype.moveToAndCollect = function(target) {
+  if (this.pos.isNearTo(target)) {
+    if (target instanceof Resource) {
+      this.pickup(target);
+    } else {
+      this.withdraw(target, RESOURCE_ENERGY);
+    }
+  } else {
+    this.moveTo(target);
+  }
+};
+
+Creep.prototype.moveToAndHarvest = function(source) {
+  if (this.pos.isNearTo(source)) {
+    this.harvest(source);
+  } else {
+    this.moveTo(source);
+  }
+};
