@@ -44,6 +44,10 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
       if(creepKill) {
         if (creepKill.store.getUsedCapacity === 0) {
           creepKill.suicide();
+        } else {
+          if (this.room.storage) {
+            creepKill.pos.isNearTo(this.room.storage) ? creepKill.transfer(this.room.storage, RESOURCE_ENERGY) : creepKill.moveTo(this.room.storage)
+          }
         }
       }
     }
