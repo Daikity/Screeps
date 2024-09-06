@@ -1,45 +1,45 @@
 StructureSpawn.prototype.creepBlueprints = {
   harvester: [
-      { cost: 200, body: [WORK, CARRY, MOVE] },
-      { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
-      { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
-      { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
+    { cost: 200, body: [WORK, CARRY, MOVE] },
+    { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
+    { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
+    { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
   ],
   upgrader: [
-      { cost: 200, body: [WORK, CARRY, MOVE] },
-      { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
-      { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
-      { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
+    { cost: 200, body: [WORK, CARRY, MOVE] },
+    { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
+    { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
+    { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
   ],
   builder: [
-      { cost: 200, body: [WORK, CARRY, MOVE] },
-      { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
-      { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
-      { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
+    { cost: 200, body: [WORK, CARRY, MOVE] },
+    { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
+    { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
+    { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
   ],
   repairer: [
-      { cost: 200, body: [WORK, CARRY, MOVE] },
-      { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
-      { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
-      { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
+    { cost: 200, body: [WORK, CARRY, MOVE] },
+    { cost: 300, body: [WORK, WORK, CARRY, MOVE] },
+    { cost: 400, body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE] },
+    { cost: 550, body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE] }
   ],
   defender: [
-      { cost: 200, body: [TOUGH, ATTACK, MOVE] },
-      { cost: 300, body: [TOUGH, ATTACK, MOVE, MOVE] },
-      { cost: 400, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE] },
-      { cost: 550, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
+    { cost: 200, body: [TOUGH, ATTACK, MOVE] },
+    { cost: 300, body: [TOUGH, ATTACK, MOVE, MOVE] },
+    { cost: 400, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE] },
+    { cost: 550, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
   ],
   miner: [
-      { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
-      { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
+    { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
+    { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
   ],
   mineralMiner: [
     { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
     { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
   ],
   military: [
-      { cost: 650, body: [CLAIM, MOVE] },
-      { cost: 1300, body: [CLAIM, CLAIM, MOVE, MOVE] }
+    { cost: 650, body: [CLAIM, MOVE] },
+    { cost: 1300, body: [CLAIM, CLAIM, MOVE, MOVE] }
   ]
 };
 
@@ -79,12 +79,12 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
   }).length
 
   return {
-      harvester: targetHarvesterCount,
-      upgrader: room.controller.level === 8 ? targetUpgraderCountForMaxLvl : targetUpgraderCount,
-      builder: countStructure > 0 ? targetBuilderCount : 0,
-      miner: _.size(containers),
-      repairer: countDamageStructures > 0 ? (countDamageStructures > 4 ? 3 : 2) : 0,
-      military: Memory.config.military ? Memory.config.military : 0,
-      mineralMiner: extractor ? 1 : 0,
+    harvester: targetHarvesterCount > 100 ? 3 : 5,
+    upgrader: room.controller.level === 8 ? targetUpgraderCountForMaxLvl : targetUpgraderCount,
+    builder: countStructure > 0 ? targetBuilderCount : 0,
+    miner: _.size(containers),
+    repairer: countDamageStructures > 0 ? 2 : 0,
+    military: Memory.config.military ? Memory.config.military : 0,
+    mineralMiner: extractor ? 1 : 0,
   };
 };

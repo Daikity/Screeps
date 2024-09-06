@@ -36,6 +36,9 @@ Creep.prototype.findMinerTarget = function() {
       if(!this.store.getFreeCapacity() && link) {
         this.transfer(link, RESOURCE_ENERGY)
       }
+      if (!this.store.getFreeCapacity() && !link) {
+        this.drop(RESOURCE_ENERGY)
+      }
       this.harvest(source);
     } else {
       this.moveTo(freeContainer);
@@ -57,10 +60,16 @@ Creep.prototype.findGeneralTarget = function() {
   const droppedResources = this.room.findDroppedResources(RESOURCE_ENERGY);
   const tombstones = this.room.findTombstonesWithResource(RESOURCE_ENERGY);
   const ruins = this.room.findRuinsWithResource(RESOURCE_ENERGY);
+  const storage = this.room.storage
 
-  const targets = [].concat(droppedResources, tombstones, ruins, containers, links).filter(Boolean);
+  const targets = [].concat(droppedResources || [], tombstones || [], ruins || [], containers || [], links || []).filter(Boolean);
 
   const freeTarget = targets.find((target) => target.store && target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
+
+  if(storage && storage.store[RESOURCE_ENERGY] > Math.pow(10, 5)) {
+    this.moveToAndCollect(storage);
+    return storage;
+  }
 
   if (freeTarget) {
     this.moveToAndCollect(freeTarget);

@@ -21,6 +21,10 @@ const uploadEnergyLink = (room) => {
     filter: (structure) => structure.pos.isNearTo(storage) && structure.structureType === STRUCTURE_LINK
   })[0];
 
+  if (!fromLink) {
+    return fromLink
+  }
+
   const toLink = room.find(FIND_STRUCTURES, {
     filter: (structure) => !structure.pos.isEqualTo(fromLink.pos) && structure.structureType === STRUCTURE_LINK
   });

@@ -18,6 +18,11 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
       mineralMiner: this.countCreepsByRole('mineralMiner'),
   };
 
+  if (currentCounts.harvester < 2) {
+    this.createCreepByRole('harvester');
+    return 'Warning: Too fwe harvesters.';
+  }
+
   // Создаем недостающих крипов для каждой роли
   Object.keys(targetCounts).forEach(role => {
       if (currentCounts[role] < targetCounts[role]) {
@@ -29,7 +34,9 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
     if(currentCounts[role] - targetCounts[role] > 0) {
       const creepKill = _.find(Game.creeps, creep => creep.memory.role === role)
       if(creepKill) {
-        creepKill.suicide();
+        if (creepKill.store.getUsedCapacity === 0) {
+          creepKill.suicide();
+        }
       }
     }
   });
