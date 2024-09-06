@@ -59,13 +59,23 @@ Creep.prototype.military = function() {
       if (controller) {
         this.memory.work = true
         const tryClime = this.claimController(controller);
-        if (tryClime === ERR_NOT_IN_RANGE) {
+
+
+        if (this.claimController(controller) === ERR_NOT_IN_RANGE) {
           this.moveTo(controller);
-        } else if (tryClime === ERR_GCL_NOT_ENOUGH) {
+        } else if (this.claimController(controller) === ERR_GCL_NOT_ENOUGH) {
           console.log("You can't clime room. Your Global Control Level is not enough.")
           Memory.config.military = 0;
           this.suicide();
           return ERR_GCL_NOT_ENOUGH;
+        } else if(this.claimController(controller) === ERR_INVALID_TARGET) {
+          const tryAttackController = this.attackController(controller)
+          if(tryAttackController === ERR_TIRED) {
+            this.say('😪')
+          }
+          if(tryAttackController === OK){
+            this.say('😈')
+          }
         } else if (this.claimController(controller) === OK) {
           targetRoom.isMy = true;
           this.memory.work = false

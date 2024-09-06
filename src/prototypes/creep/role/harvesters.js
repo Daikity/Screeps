@@ -1,5 +1,4 @@
-Creep.prototype.harvester = function() {
-  const storage = this.room.storage
+Creep.prototype.getFreeCapacityStructures = function() {
   const spawn = this.room.find(FIND_STRUCTURES, {
     filter: (structure) =>  structure.structureType == STRUCTURE_SPAWN &&
         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
@@ -13,7 +12,12 @@ Creep.prototype.harvester = function() {
     }
   }), structure => this.pos.getRangeTo(structure.pos))
 
-  const targetUpload = [].concat(spawn || [], structures || [], storage || [])[0]
+  return [].concat(spawn || [], structures || [])
+}
+
+Creep.prototype.harvester = function() {
+  const storage = this.room.storage
+  const targetUpload = [].concat(this.getFreeCapacityStructures(), storage || [])[0]
 
   if (this.store.getFreeCapacity() > 0) {
     const target = this.findEnergyAndFreeSpot();

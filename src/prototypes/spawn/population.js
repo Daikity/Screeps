@@ -15,6 +15,7 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
       miner: this.countCreepsByRole('miner'),
       repairer: this.countCreepsByRole('repairer'),
       military: this.countCreepsByRole('military'),
+      solder: this.countCreepsByRole('solder'),
       mineralMiner: this.countCreepsByRole('mineralMiner'),
   };
 

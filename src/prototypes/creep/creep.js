@@ -42,6 +42,9 @@ Creep.prototype.findMinerTarget = function() {
       this.harvest(source);
     } else {
       this.moveTo(freeContainer);
+      if(Memory.buildRoad) {
+        Game.rooms[this.room.name].createConstructionSite(this.pos, STRUCTURE_ROAD);
+      }
     }
     return freeContainer;
   } else {
@@ -49,6 +52,9 @@ Creep.prototype.findMinerTarget = function() {
       this.harvest(source);
     } else {
       this.moveTo(source);
+      if(Memory.buildRoad) {
+        Game.rooms[this.room.name].createConstructionSite(this.pos, STRUCTURE_ROAD);
+      }
     }
     return source;
   }
@@ -66,9 +72,11 @@ Creep.prototype.findGeneralTarget = function() {
 
   const freeTarget = targets.find((target) => target.store && target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
 
-  if(storage && storage.store[RESOURCE_ENERGY] > Math.pow(10, 5)) {
-    this.moveToAndCollect(storage);
-    return storage;
+  if(this.getFreeCapacityStructures().length > 0) {
+    if(storage && storage.store[RESOURCE_ENERGY] > Math.pow(10, 5)) {
+      this.moveToAndCollect(storage);
+      return storage;
+    }
   }
 
   if (freeTarget) {
@@ -95,6 +103,9 @@ Creep.prototype.moveToAndCollect = function(target) {
     }
   } else {
     this.moveTo(target);
+    if(Memory.buildRoad) {
+      Game.rooms[this.room.name].createConstructionSite(this.pos, STRUCTURE_ROAD);
+    }
   }
 };
 
@@ -103,5 +114,8 @@ Creep.prototype.moveToAndHarvest = function(source) {
     this.harvest(source);
   } else {
     this.moveTo(source);
+    if(Memory.buildRoad) {
+      Game.rooms[this.room.name].createConstructionSite(this.pos, STRUCTURE_ROAD);
+    }
   }
 };

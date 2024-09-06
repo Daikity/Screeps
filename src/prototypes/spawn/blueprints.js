@@ -29,6 +29,11 @@ StructureSpawn.prototype.creepBlueprints = {
     { cost: 400, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE] },
     { cost: 550, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
   ],
+  solder: [
+    { cost: 450, body: [TOUGH, TOUGH, TOUGH, ATTACK, RANGED_ATTACK, ATTACK, MOVE, MOVE] },
+    { cost: 550, body: [TOUGH, TOUGH, TOUGH, TOUGH, ATTACK, ATTACK, RANGED_ATTACK, ATTACK, MOVE, MOVE] },
+    { cost: 650, body: [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, ATTACK, ATTACK, ATTACK, RANGED_ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE] },
+  ],
   miner: [
     { cost: 300, body: [WORK, CARRY, MOVE] }, // Минимум 300 энергии для двух WORK
     { cost: 550, body: [WORK, WORK, CARRY, MOVE] }
@@ -85,6 +90,7 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
     miner: _.size(containers),
     repairer: countDamageStructures > 0 ? 2 : 0,
     military: Memory.config.military ? Memory.config.military : 0,
+    solder: Memory.config.solder ? Memory.config.solder : 0,
     mineralMiner: extractor ? 1 : 0,
   };
 };
