@@ -68,7 +68,9 @@ Creep.prototype.findGeneralTarget = function() {
   const ruins = this.room.findRuinsWithResource(RESOURCE_ENERGY);
   const storage = this.room.storage
 
-  const targets = [].concat(droppedResources || [], tombstones || [], ruins || [], containers || [], links || []).filter(Boolean);
+  const linksOnStorage = _.filter(links, link => link.pos.isNearTo(storage.pos))
+
+  const targets = [].concat(droppedResources || [], tombstones || [], ruins || [], linksOnStorage || [], containers || []).filter(Boolean);
 
   const freeTarget = targets.find((target) => target.store && target.store[RESOURCE_ENERGY] >= this.store.getFreeCapacity());
 

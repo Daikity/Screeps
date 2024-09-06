@@ -1,10 +1,10 @@
-Creep.prototype.defendRoom = function() {
-  const enemies = this.room.find(FIND_HOSTILE_CREEPS);
-
+Creep.prototype.defender = function() {
+  const enemies = _.sortBy(this.room.find(FIND_HOSTILE_CREEPS), enemy => this.pos.getRangeTo(enemy.pos))
   if(enemies.length > 0) {
     this.pos.isNearTo(enemies[0]) ? this.attack(enemies[0]) : this.moveTo(enemies[0])
-    return true;
+  } else {
+    console.log('All enemies is dead');
+    this.say('😈');
+    this.suicide();
   }
-  this.memory.working = false;
-  return false;
 }

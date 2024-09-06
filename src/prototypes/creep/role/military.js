@@ -58,9 +58,6 @@ Creep.prototype.military = function() {
       const controller = this.room.controller;
       if (controller) {
         this.memory.work = true
-        const tryClime = this.claimController(controller);
-
-
         if (this.claimController(controller) === ERR_NOT_IN_RANGE) {
           this.moveTo(controller);
         } else if (this.claimController(controller) === ERR_GCL_NOT_ENOUGH) {

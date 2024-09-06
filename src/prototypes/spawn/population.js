@@ -17,7 +17,14 @@ StructureSpawn.prototype.manageCreepPopulation = function() {
       military: this.countCreepsByRole('military'),
       solder: this.countCreepsByRole('solder'),
       mineralMiner: this.countCreepsByRole('mineralMiner'),
+      defender: this.countCreepsByRole('defender'),
   };
+
+  if (currentCounts.defender < targetCounts.defender) {
+    this.createCreepByRole('defender');
+    console.log("Attention! We are being attacked!")
+    return 'Attention! We are being attacked';
+  }
 
   if (currentCounts.harvester < 2) {
     this.createCreepByRole('harvester');

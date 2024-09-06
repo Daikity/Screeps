@@ -25,9 +25,9 @@ StructureSpawn.prototype.creepBlueprints = {
   ],
   defender: [
     { cost: 200, body: [TOUGH, ATTACK, MOVE] },
-    { cost: 300, body: [TOUGH, ATTACK, MOVE, MOVE] },
-    { cost: 400, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE] },
-    { cost: 550, body: [TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
+    { cost: 300, body: [TOUGH, TOUGH, ATTACK, MOVE, MOVE] },
+    { cost: 400, body: [TOUGH, TOUGH, ATTACK, ATTACK, MOVE, MOVE] },
+    { cost: 550, body: [TOUGH, TOUGH, TOUGH, ATTACK, ATTACK, MOVE, MOVE, MOVE] }
   ],
   solder: [
     { cost: 450, body: [TOUGH, TOUGH, TOUGH, ATTACK, RANGED_ATTACK, ATTACK, MOVE, MOVE] },
@@ -82,6 +82,7 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
   const countDamageStructures = this.room.find(FIND_STRUCTURES, {
     filter: object => object.hits < object.hitsMax
   }).length
+  const countEnemy = this.room.find(FIND_HOSTILE_CREEPS).length;
 
   return {
     harvester: targetHarvesterCount > 100 ? 3 : 5,
@@ -92,5 +93,6 @@ StructureSpawn.prototype.determineTargetCreepCount = function() {
     military: Memory.config.military ? Memory.config.military : 0,
     solder: Memory.config.solder ? Memory.config.solder : 0,
     mineralMiner: extractor ? 1 : 0,
+    defender: countEnemy > 0 ? countEnemy + 1 : 0
   };
 };
